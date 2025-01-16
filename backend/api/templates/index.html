@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="ru">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link
+			rel="stylesheet"
+			href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css"
+		/>
+		<title>Транзакции</title>
+	</head>
+	<body>
+		{% include 'header.html' %}
+		<main>
+			<div class="container py-5">
+				<h1>Лента транзакций</h1>
+				<hr />
+
+				<!-- Перебираем все транзакции -->
+				{% for transaction in transactions %}
+				<article>
+					<ul>
+						<li>Дата: {{ transaction.created_at }}</li>
+						<li>Сумма: {{ transaction.amount }} руб.</li>
+						<li>Статус: {{ transaction.status }}</li>
+					</ul>
+					<hr />
+				</article>
+				{% empty %}
+				<p>Транзакций нет.</p>
+				{% endfor %}
+			</div>
+		</main>
+		{% include 'footer.html' %}
+		<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+	</body>
+</html>

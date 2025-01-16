@@ -1,0 +1,44 @@
+<header>
+	<nav class="navbar navbar-light" style="background-color: lightskyblue">
+		<div class="container">
+			<a class="navbar-brand" href="{% url 'index' %}">Cash Flow</a>
+			<ul class="nav nav-pills ms-auto">
+				<!-- Добавлено ms-auto для выравнивания вправо -->
+				{% with request.resolver_match.view_name as view_name %}
+				<li class="nav-item">
+					<a
+						class="nav-link {% if view_name == 'index' %}active{% endif %}"
+						href="{% url 'index' %}"
+					>
+						Лента транзакций
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link {% if view_name == 'create' %}active{% endif %}"
+						href="{% url 'create' %}"
+					>
+						Создать транзакцию
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link {% if view_name == 'status' %}active{% endif %}"
+						href="{% url 'status' %}"
+					>
+						Статус
+					</a>
+				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link {% if view_name == 'type' %}active{% endif %}"
+						href="{% url 'type' %}"
+					>
+						Тип
+					</a>
+				</li>
+				{% endwith %}
+			</ul>
+		</div>
+	</nav>
+</header>
