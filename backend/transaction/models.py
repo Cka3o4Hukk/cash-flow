@@ -5,15 +5,8 @@ from django.utils.timezone import now
 class TransactionType(models.Model):
     """Тип операции"""
 
-    TYPE_CHOICES = [
-        ('business', 'Пополнение'),
-        ('personal', 'Списание'),
-        ('tax', 'Налог'),
-    ]
-
     name = models.CharField(
         max_length=50,
-        choices=TYPE_CHOICES,
         blank=False,
         verbose_name="Название статуса"
     )
@@ -32,12 +25,6 @@ class Category(models.Model):
         max_length=100,
         unique=True,
         verbose_name="Категория"
-    )
-    transaction_type = models.ForeignKey(
-        TransactionType,
-        on_delete=models.CASCADE,
-        related_name="categories",
-        verbose_name="Тип операции"
     )
 
     def __str__(self):
@@ -75,7 +62,6 @@ class TransactionStatus(models.Model):
 
     name = models.CharField(
         max_length=50,
-        #choices=STATUS_CHOICES,
         blank=False,
         verbose_name="Название статуса"
     )
@@ -88,15 +74,8 @@ class TransactionStatus(models.Model):
         verbose_name_plural = "Статусы транзакций"
 
 
-
 class Transaction(models.Model):
     """Транзация, модель со всеми составляющими"""
-
-    STATUS_CHOICES = [
-        ('business', 'Бизнес'),
-        ('personal', 'Личное'),
-        ('tax', 'Налог'),
-    ]
 
     created_at = models.DateField(
         default=now,
@@ -104,7 +83,6 @@ class Transaction(models.Model):
     )
     status = models.CharField(
         max_length=20,
-        choices=STATUS_CHOICES,
         default='personal',
         verbose_name="Статус"
     )

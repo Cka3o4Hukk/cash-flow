@@ -37,6 +37,22 @@
 						Тип
 					</a>
 				</li>
+				<li class="nav-item">
+					<a
+						class="nav-link {% if view_name == 'category_list' %}active{% endif %}"
+						href="{% url 'category_list' %}"
+					>
+						Список категорий
+					</a>
+				</li>
+				<li>
+					<a
+						class="nav-link {% if view_name == 'subcategory_list' %}active{% endif %}"
+						href="{% url 'subcategory_list' %}"
+					>
+						Список подкатегорий
+					</a>
+				</li>
 				{% endwith %}
 			</ul>
 		</div>

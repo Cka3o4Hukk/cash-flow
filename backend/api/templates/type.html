@@ -47,14 +47,14 @@
 								</div>
 								<div class="d-flex">
 									<a
-										href="{% url 'type-edit' type.id %}"
+										href="{% url 'type_edit' type.id %}"
 										class="btn btn-sm btn-primary me-2"
 									>
 										Редактировать
 									</a>
 									<form
 										method="POST"
-										action="{% url 'type-delete' type.id %}"
+										action="{% url 'type_delete' type.id %}"
 										style="display: inline"
 									>
 										{% csrf_token %}
@@ -72,7 +72,7 @@
 						</div>
 						<form
 							method="POST"
-							action="{% url 'type-delete-all' %}"
+							action="{% url 'type_delete_all' %}"
 							class="mt-4"
 						>
 							{% csrf_token %}

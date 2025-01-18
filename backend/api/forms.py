@@ -1,18 +1,21 @@
 from django import forms
-from transaction.models import Transaction, TransactionType, Category, Subcategory, TransactionStatus
+from transaction.models import (Transaction, TransactionType, Category,
+                                Subcategory, TransactionStatus)
+
 
 class TransactionForm(forms.ModelForm):
     class Meta:
         model = Transaction
-        fields = ['amount', 'status', 'transaction_type', 'category', 'subcategory', 'comment']
-    
+        fields = ['amount', 'status', 'transaction_type', 'category',
+                  'subcategory', 'comment']
+
     # Поле для выбора статуса
     status = forms.ModelChoiceField(
         queryset=TransactionStatus.objects.all(),
         empty_label="Выберите статус",
         widget=forms.Select(attrs={'class': 'form-control'})
     )
-    
+
     # Поле для выбора типа операции
     transaction_type = forms.ModelChoiceField(
         queryset=TransactionType.objects.all(),
@@ -34,12 +37,23 @@ class TransactionForm(forms.ModelForm):
         widget=forms.Select(attrs={'class': 'form-control'})
     )
 
+    comment = forms.CharField(
+        required=False,
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 4}),
+        label="Комментарий"
+    )
+
+
 class StatusForm(forms.ModelForm):
     predefined_status = forms.ChoiceField(
-        choices=[('', 'Выберите статус'), ('Бизнес', 'Бизнес'), ('Личное', 'Личное'), ('Налог', 'Налог')],
+        choices=[('', 'Выберите статус'),
+                 ('Бизнес', 'Бизнес'),
+                 ('Личное', 'Личное'),
+                 ('Налог', 'Налог')
+                 ],
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'}),
-        label="Выберите из существующих" 
+        label="Выберите из существующих"
     )
     new_status = forms.CharField(
         max_length=50,
@@ -55,7 +69,7 @@ class StatusForm(forms.ModelForm):
 
     class Meta:
         model = TransactionStatus
-        fields = []
+        fields = ['predefined_status', 'new_status']
 
     def clean(self):
         cleaned_data = super().clean()
@@ -63,7 +77,8 @@ class StatusForm(forms.ModelForm):
         new_status = cleaned_data.get('new_status')
 
         if not predefined_status and not new_status:
-            raise forms.ValidationError("Вы должны выбрать статус или ввести новый.")
+            raise forms.ValidationError(
+                "Вы должны выбрать статус или ввести новый.")
 
         if predefined_status:
             cleaned_data['name'] = predefined_status
@@ -80,10 +95,11 @@ class StatusForm(forms.ModelForm):
 
 class TypeForm(forms.ModelForm):
     predefined_status = forms.ChoiceField(
-        choices=[('', 'Выберите тип'), ('Пополнение', 'Пополнение'), ('Списание', 'Списание')],
+        choices=[('', 'Выберите тип'), ('Пополнение', 'Пополнение'),
+                 ('Списание', 'Списание')],
         required=False,
         widget=forms.Select(attrs={'class': 'form-control'}),
-        label="Выберите из существующих" 
+        label="Выберите из существующих"
     )
     new_status = forms.CharField(
         max_length=50,
@@ -103,11 +119,12 @@ class TypeForm(forms.ModelForm):
 
     def clean(self):
         cleaned_data = super().clean()
-        predefined_type = cleaned_data.get('predefined_status')  # исправлено на 'predefined_status'
-        new_type = cleaned_data.get('new_status')  # исправлено на 'new_status'
+        predefined_type = cleaned_data.get('predefined_status')
+        new_type = cleaned_data.get('new_status')
 
-        if not predefined_type and not new_type:  # проверка переменных
-            raise forms.ValidationError("Вы должны выбрать тип или ввести новый.")
+        if not predefined_type and not new_type:
+            raise forms.ValidationError(
+                "Вы должны выбрать тип или ввести новый.")
 
         if predefined_type:
             cleaned_data['name'] = predefined_type
@@ -120,4 +137,53 @@ class TypeForm(forms.ModelForm):
         name = self.cleaned_data.get('name')
         if commit:
             return TransactionType.objects.create(name=name)
-    
+
+
+class CategoryForm(forms.ModelForm):
+    class Meta:
+        model = Category
+        fields = ['name']
+        widgets = {
+            'name': forms.TextInput(attrs={
+                'class': 'form-control', 'placeholder': 'Введите категорию'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(CategoryForm, self).__init__(*args, **kwargs)
+        self.fields['name'].error_messages = {
+            'required': 'Категория не может быть пустой'
+        }
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if not name:
+            raise forms.ValidationError("Категория не может быть пустой")
+        return name
+
+
+class SubcategoryForm(forms.ModelForm):
+    class Meta:
+        model = Subcategory
+        fields = ['name', 'category']  # Добавляем поле для выбора категории
+        widgets = {
+            'name': forms.TextInput(
+                attrs={
+                    'class': 'form-control',
+                    'placeholder': 'Введите подкатегорию'
+                    }
+                ),
+            'category': forms.Select(attrs={'class': 'form-control'}),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(SubcategoryForm, self).__init__(*args, **kwargs)
+        self.fields['name'].error_messages = {
+            'required': 'Подкатегория не может быть пустой'
+        }
+        self.fields['category'].queryset = Category.objects.all()
+
+    def clean_name(self):
+        name = self.cleaned_data.get('name')
+        if not name:
+            raise forms.ValidationError("Подкатегория не может быть пустой")
+        return name
